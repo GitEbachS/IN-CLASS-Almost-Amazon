@@ -1,5 +1,8 @@
 import { signOut } from '../utils/auth';
-
+import { booksOnSale, getBooks, searchBooks } from '../api/bookData';
+import { emptyBooks, showBooks } from '../pages/books';
+import { favAuthor, getAuthors } from '../api/authorData';
+import { showAuthors } from '../pages/authors';
 // navigation events
 const navigationEvents = () => {
   // LOGOUT BUTTON
@@ -8,12 +11,17 @@ const navigationEvents = () => {
 
   // TODO: BOOKS ON SALE
   document.querySelector('#sale-books').addEventListener('click', () => {
-    console.warn('CLICKED SALE BOOKS');
+    booksOnSale().then(showBooks);
   });
 
-  // TODO: ALL BOOKS
   document.querySelector('#all-books').addEventListener('click', () => {
-    console.warn('CLICKED ALL BOOKS');
+    getBooks().then((array) => {
+      if (array.length) {
+        showBooks(array);
+      } else {
+        emptyBooks();
+      }
+    });
   });
 
   // FIXME: STUDENTS Create an event listener for the Authors
@@ -21,9 +29,12 @@ const navigationEvents = () => {
   // 2. Convert the response to an array because that is what the makeAuthors function is expecting
   // 3. If the array is empty because there are no authors, make sure to use the emptyAuthor function
   document.querySelector('#authors').addEventListener('click', () => {
-    console.warn('CLICKED AUTHORS');
+    getAuthors().then(showAuthors);
   });
 
+  document.querySelector('#favorite-authors').addEventListener('click', () => {
+    favAuthor().then(showAuthors);
+  });
   // STRETCH: SEARCH
   document.querySelector('#search').addEventListener('keyup', (e) => {
     const searchValue = document.querySelector('#search').value.toLowerCase();
@@ -34,7 +45,14 @@ const navigationEvents = () => {
       // MAKE A CALL TO THE API TO FILTER ON THE BOOKS
       // IF THE SEARCH DOESN'T RETURN ANYTHING, SHOW THE EMPTY STORE
       // OTHERWISE SHOW THE STORE
-
+      searchBooks(searchValue)
+        .then((search) => {
+          if (search.length) {
+            showBooks(search);
+          } else {
+            emptyBooks();
+          }
+        });
       document.querySelector('#search').value = '';
     }
   });
