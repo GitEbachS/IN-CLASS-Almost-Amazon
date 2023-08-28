@@ -10,7 +10,13 @@ const getAuthors = () => new Promise((resolve, reject) => {
       'Content-Type': 'application/json'
     },
   }).then((response) => response.json())
-    .then((data) => resolve(Object.values(data)))
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
     .catch(reject);
 });
 
@@ -23,7 +29,7 @@ const createAuthor = (payload) => new Promise((resolve, reject) => {
     },
     body: JSON.stringify(payload)
   }).then((response) => response.json())
-    .then((data) => resolve(Object.values(data)))
+    .then((data) => resolve(data))
     .catch(reject);
 });
 
@@ -61,7 +67,7 @@ const updateAuthor = (payload) => new Promise((resolve, reject) => {
     },
     body: JSON.stringify(payload)
   }).then((response) => response.json())
-    .then((data) => resolve(Object.values(data)))
+    .then((data) => resolve(data))
     .catch(reject);
 });
 
