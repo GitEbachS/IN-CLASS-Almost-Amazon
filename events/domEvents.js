@@ -7,8 +7,9 @@ import addAuthorForm from '../components/forms/addAuthorForm';
 import viewAuthor from '../pages/viewAuthor';
 import viewBook from '../pages/viewBook';
 import { deleteAuthorBooksRelationship, getAuthorDetails, getBookDetails } from '../api/mergedData';
+import { emptyAuthors, showAuthors } from '../pages/authors';
 
-const domEvents = () => {
+const domEvents = (user) => {
   document.querySelector('#main-container').addEventListener('click', (e) => {
     if (e.target.id.includes('delete-book')) {
       if (window.confirm('Want to delete?')) {
@@ -19,13 +20,13 @@ const domEvents = () => {
 
     // TODO: CLICK EVENT FOR SHOWING FORM FOR ADDING A BOOK
     if (e.target.id.includes('add-book-btn')) {
-      addBookForm();
+      addBookForm(user.uid);
     }
 
     // TODO: CLICK EVENT EDITING/UPDATING A BOOK
     if (e.target.id.includes('edit-book-btn')) {
       const [, firebaseKey] = e.target.id.split('--');
-      getSingleBook(firebaseKey).then((bookObj) => addBookForm(bookObj));
+      getSingleBook(firebaseKey).then((bookObj) => addBookForm(user.uid, bookObj));
     }
     // TODO: CLICK EVENT FOR VIEW BOOK DETAILS
     if (e.target.id.includes('view-book-btn')) {
@@ -40,17 +41,25 @@ const domEvents = () => {
     if (e.target.id.includes('delete-author-btn')) {
       if (window.confirm('Want to delete?')) {
         const [, firebaseKey] = e.target.id.split('--');
-        deleteAuthorBooksRelationship(firebaseKey).then(getAuthors).then();
+        deleteAuthorBooksRelationship(firebaseKey).then(() => {
+          getAuthors(user.uid).then((array) => {
+            if (array.length) {
+              showAuthors(array);
+            } else {
+              emptyAuthors();
+            }
+          });
+        });
       }
     }
 
     // FIXME: ADD CLICK EVENT FOR SHOWING FORM FOR ADDING AN AUTHOR
     if (e.target.id.includes('add-author-btn')) {
-      addAuthorForm();
+      addAuthorForm(user.uid);
     }
     if (e.target.id.includes('update-author-btn')) {
       const [, firebaseKey] = e.target.id.split('--');
-      getSingleAuthor(firebaseKey).then((authObj) => addAuthorForm(authObj));
+      getSingleAuthor(firebaseKey).then((authObj) => addAuthorForm(user.uid, authObj));
     }
     // FIXME: ADD CLICK EVENT FOR EDITING AN AUTHOR
   });

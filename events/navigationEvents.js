@@ -2,20 +2,20 @@ import { signOut } from '../utils/auth';
 import { booksOnSale, getBooks, searchBooks } from '../api/bookData';
 import { emptyBooks, showBooks } from '../pages/books';
 import { favAuthor, getAuthors } from '../api/authorData';
-import { showAuthors } from '../pages/authors';
+import { emptyAuthors, showAuthors } from '../pages/authors';
 // navigation events
-const navigationEvents = () => {
+const navigationEvents = (user) => {
   // LOGOUT BUTTON
   document.querySelector('#logout-button')
     .addEventListener('click', signOut);
 
   // TODO: BOOKS ON SALE
   document.querySelector('#sale-books').addEventListener('click', () => {
-    booksOnSale().then(showBooks);
+    booksOnSale(user.uid).then(showBooks);
   });
 
   document.querySelector('#all-books').addEventListener('click', () => {
-    getBooks().then((array) => {
+    getBooks(user.uid).then((array) => {
       if (array.length) {
         showBooks(array);
       } else {
@@ -29,11 +29,17 @@ const navigationEvents = () => {
   // 2. Convert the response to an array because that is what the makeAuthors function is expecting
   // 3. If the array is empty because there are no authors, make sure to use the emptyAuthor function
   document.querySelector('#authors').addEventListener('click', () => {
-    getAuthors().then(showAuthors);
+    getAuthors(user.uid).then((array) => {
+      if (array.length) {
+        showAuthors(array);
+      } else {
+        emptyAuthors();
+      }
+    });
   });
 
   document.querySelector('#favorite-authors').addEventListener('click', () => {
-    favAuthor().then(showAuthors);
+    favAuthor(user.uid).then(showAuthors);
   });
   // STRETCH: SEARCH
   document.querySelector('#search').addEventListener('keyup', (e) => {
@@ -45,7 +51,7 @@ const navigationEvents = () => {
       // MAKE A CALL TO THE API TO FILTER ON THE BOOKS
       // IF THE SEARCH DOESN'T RETURN ANYTHING, SHOW THE EMPTY STORE
       // OTHERWISE SHOW THE STORE
-      searchBooks(searchValue)
+      searchBooks(searchValue, user.uid)
         .then((search) => {
           if (search.length) {
             showBooks(search);
