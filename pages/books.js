@@ -19,6 +19,7 @@ const showBooks = (array) => {
     array.forEach((item) => {
       domString += `
         <div class="card">
+        <i id="order-btn--${item.firebaseKey}" class="fas btn btn-success">Order</i>
           <img class="card-img-top" src=${item.image} alt=${item.title} style="height: 400px;">
           <div class="card-body" style="height: 180px;">
             <h5 class="card-title">${item.title}</h5>

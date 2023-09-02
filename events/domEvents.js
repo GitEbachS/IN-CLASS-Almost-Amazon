@@ -8,6 +8,7 @@ import viewAuthor from '../pages/viewAuthor';
 import viewBook from '../pages/viewBook';
 import { deleteAuthorBooksRelationship, getAuthorDetails, getBookDetails } from '../api/mergedData';
 import { emptyAuthors, showAuthors } from '../pages/authors';
+import { getSingleOrder, updateOrderBook, createOrderBook } from '../api/orderData';
 
 const domEvents = (user) => {
   document.querySelector('#main-container').addEventListener('click', (e) => {
@@ -53,6 +54,20 @@ const domEvents = (user) => {
       }
     }
 
+    if (e.target.id.includes('order-btn')) {
+      const [, firebaseKey] = e.target.id.split('--');
+
+      getSingleOrder(user.uid).then((orderObj) => {
+        const payload = {
+          orderId: orderObj.name,
+          bookId: firebaseKey,
+        };
+        createOrderBook(payload).then(({ name }) => {
+          const patchPayload = { firebaseKey: name };
+          updateOrderBook(patchPayload);
+        });
+      });
+    }
     // FIXME: ADD CLICK EVENT FOR SHOWING FORM FOR ADDING AN AUTHOR
     if (e.target.id.includes('add-author-btn')) {
       addAuthorForm(user.uid);
