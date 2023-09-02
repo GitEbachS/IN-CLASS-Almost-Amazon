@@ -1,5 +1,6 @@
 import { createAuthor, getAuthors, updateAuthor } from '../api/authorData';
 import { createBook, getBooks, updateBook } from '../api/bookData';
+import { createOrder, updateCreateOrder } from '../api/orderData';
 import { showAuthors } from '../pages/authors';
 import { showBooks } from '../pages/books';
 
@@ -73,6 +74,24 @@ const formEvents = (user) => {
 
       updateAuthor(payload).then(() => {
         getAuthors(user.uid).then(showAuthors);
+      });
+    }
+
+    if (e.target.id.includes('order-form')) {
+      const payload = {
+        first_name: document.querySelector('#first_name').value,
+        last_name: document.querySelector('#last_name').value,
+        email: document.querySelector('#email').value,
+        order_type: document.querySelector('#order-type').value,
+        uid: user.uid
+      };
+
+      createOrder(payload).then(({ name }) => {
+        const patchPayload = { firebaseKey: name };
+
+        updateCreateOrder(patchPayload).then(() => {
+          getBooks(user.uid).then(showBooks);
+        });
       });
     }
     // FIXME:ADD CLICK EVENT FOR EDITING AN AUTHOR

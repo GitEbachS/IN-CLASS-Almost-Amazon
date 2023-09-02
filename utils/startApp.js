@@ -1,4 +1,5 @@
 import { getBooks } from '../api/bookData';
+import createOrderButton from '../components/buttons/createOrderButton';
 import logoutButton from '../components/buttons/logoutButton';
 import domBuilder from '../components/shared/domBuilder';
 import navBar from '../components/shared/navBar';
@@ -13,6 +14,7 @@ const startApp = (user) => {
   formEvents(user); // ADD FORM EVENT LISTENTERS TO THE DOM
   navBar(); // DYNAMICALLY ADD THE NAV
   logoutButton(); // ADD THE LOGOUT BUTTON COMPONENT
+  createOrderButton();
   navigationEvents(user); // ATTACH THE EVENT LISTENERS TO THE NAVBAR
   getBooks(user.uid).then((array) => {
     if (array.length) {
